@@ -1,0 +1,118 @@
+<section class="tab-pane active">
+  <div class="templates-layout">
+    <!-- Template Creator -->
+    <div class="card glass-card">
+      <div class="card-header">
+        <h3>{{ newTemplate.id ? 'Edit Template' : 'Create Template' }}</h3>
+        <p>Define a reusable message template with dynamic variables.</p>
+      </div>
+      <div class="card-body">
+        <form id="template-form" (ngSubmit)="saveTemplate()">
+          <div class="form-group">
+            <label for="template-name">Template Name</label>
+            <input
+              type="text"
+              id="template-name"
+              name="name"
+              class="form-control"
+              placeholder="e.g. Java Interview Invite"
+              [(ngModel)]="newTemplate.name"
+              required
+            />
+          </div>
+          <div class="form-group" style="position: relative;">
+            <label for="template-content">Message Content</label>
+            <textarea
+              id="template-content"
+              name="content"
+              class="form-control text-area"
+              rows="6"
+              placeholder="Write your template text here. Use dynamic variables below. You can also type double curly braces '{{' to autocomplete."
+              [(ngModel)]="newTemplate.content"
+              (input)="onTextareaInput($event)"
+              (keydown)="onTextareaKeyDown($event)"
+              required
+            ></textarea>
+
+            @if (showSuggestions) {
+              <div class="suggestions-overlay">
+                <div class="suggestions-header">Variables Suggestions</div>
+                <div class="suggestions-list">
+                  @for (sug of filteredSuggestions; track sug; let i = $index) {
+                    <div 
+                      class="suggestion-item" 
+                      [class.active]="i === activeSuggestionIndex"
+                      (click)="selectSuggestion(sug)"
+                    >
+                      {{ sug }}
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+            
+            <div class="variables-panel">
+              <h4>Click to Insert Dynamic Variables:</h4>
+              <div class="variable-tags">
+                <span class="var-tag" (click)="insertPlaceholder('{{candidateName}}')">{{ '{{candidateName}}' }}</span>
+                <span class="var-tag" (click)="insertPlaceholder('{{companyName}}')">{{ '{{companyName}}' }}</span>
+                <span class="var-tag" (click)="insertPlaceholder('{{role}}')">{{ '{{role}}' }}</span>
+                <span class="var-tag" (click)="insertPlaceholder('{{panelTiming}}')">{{ '{{panelTiming}}' }}</span>
+                <span class="var-tag" (click)="insertPlaceholder('{{gmeetLink}}')">{{ '{{gmeetLink}}' }}</span>
+                <span class="var-tag" (click)="insertPlaceholder('{{interviewerName}}')">{{ '{{interviewerName}}' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            @if (newTemplate.id) {
+              <button type="button" class="btn btn-secondary" (click)="clearTemplateForm()">Cancel</button>
+            }
+            <button type="submit" class="btn btn-primary" [disabled]="!newTemplate.name || !newTemplate.content">
+              {{ newTemplate.id ? 'Update Template' : 'Create Template' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Templates List Grid -->
+    <div class="card glass-card">
+      <div class="card-header">
+        <h3>Available Templates</h3>
+        <p>A list of templates registered in the system.</p>
+      </div>
+      <div class="card-body">
+        <div class="templates-grid">
+          @for (t of templates; track t.id) {
+            <div class="template-card">
+              <div class="template-card-header">
+                <h4>{{ t.name }}</h4>
+                <span class="badge uploaded">ID: {{ t.id }}</span>
+              </div>
+              <div class="template-card-body">
+                {{ t.content }}
+              </div>
+              <div class="template-card-footer">
+                <button class="btn btn-secondary btn-sm" (click)="editTemplate(t)">Edit</button>
+                <button class="btn btn-secondary btn-sm" (click)="openDeleteModal(t.id, t.name)" style="color: var(--color-red)">Delete</button>
+              </div>
+            </div>
+          } @empty {
+            <div class="text-center" style="grid-column: 1 / -1; padding: 40px 0; color: var(--text-secondary)">
+              No templates created yet. Create your first template on the left!
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Custom Deletion Confirm Modal -->
+<app-confirm-modal
+  title="Delete Message Template"
+  [message]="'Are you sure you want to delete the template \'' + templateNameToDelete + '\'? Candidates previously sent messages using this template will retain their log logs, but this configuration will be permanently erased.'"
+  [isOpen]="isDeleteModalOpen"
+  (confirm)="confirmDeleteTemplate()"
+  (cancel)="closeDeleteModal()"
+></app-confirm-modal>

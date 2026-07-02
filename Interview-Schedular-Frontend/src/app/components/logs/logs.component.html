@@ -1,0 +1,72 @@
+<section class="tab-pane active">
+  <div class="card glass-card">
+    <div class="card-header logs-header">
+      <div>
+        <h3>Delivery Logs</h3>
+        <p>Track detailed status logs and error reports of sent messages.</p>
+      </div>
+      <div class="logs-filter">
+        <select
+          id="logs-batch-filter"
+          class="form-control"
+          [(ngModel)]="logsBatchFilter"
+          (change)="onLogsFilterChange()"
+        >
+          <option value="">-- Select a Batch --</option>
+          @for (b of batches; track b.id) {
+            <option [value]="b.id">Batch #{{ b.id }} - {{ b.fileName }}</option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Log ID</th>
+              <th>Candidate Name</th>
+              <th>WhatsApp Number</th>
+              <th>Status</th>
+              <th>Sent Time</th>
+              <th>Error Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (logEntry of logs; track logEntry.id) {
+              <tr>
+                <td>
+                  <strong>#{{ logEntry.id }}</strong>
+                </td>
+                <td>{{ getCandidateName(logEntry.candidateId) }}</td>
+                <td>{{ getCandidatePhone(logEntry.candidateId) }}</td>
+                <td>
+                  <span class="badge" [class]="(logEntry.status || '').toLowerCase()">{{
+                    logEntry.status || 'PENDING'
+                  }}</span>
+                </td>
+                <td>{{ logEntry.sentAt | date: 'medium' }}</td>
+                <td
+                  class="text-red"
+                  style="font-size: 11px; max-width: 200px; overflow-wrap: break-word"
+                >
+                  {{ logEntry.errorMessage ? logEntry.errorMessage : '-' }}
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center">
+                  {{
+                    isLoadingLogs
+                      ? 'Loading logs...'
+                      : 'Select a batch from the filter dropdown above to view delivery logs.'
+                  }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

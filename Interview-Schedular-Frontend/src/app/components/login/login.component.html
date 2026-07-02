@@ -1,0 +1,152 @@
+<div class="auth-container">
+  <div class="auth-card glass-card">
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-light">
+          <path d="M22 2L11 13"></path>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </div>
+      <h2>Interview Scheduler</h2>
+      <p>Log in to manage candidate campaigns</p>
+    </div>
+
+    <!-- Login Mode Tabs -->
+    <div class="auth-tabs">
+      <button
+        type="button"
+        class="auth-tab"
+        [class.active]="activeTab === 'password'"
+        (click)="switchTab('password')"
+      >
+        Password
+      </button>
+      <button
+        type="button"
+        class="auth-tab"
+        [class.active]="activeTab === 'otp'"
+        (click)="switchTab('otp')"
+      >
+        OTP Login
+      </button>
+    </div>
+
+    <!-- Tab 1: Password Login Form -->
+    @if (activeTab === 'password') {
+      <form (ngSubmit)="onPasswordLogin()" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Registered Email Address</label>
+          <input
+            type="email"
+            id="login-email"
+            name="email"
+            class="form-control"
+            placeholder="e.g. admin@example.com"
+            [(ngModel)]="passwordForm.email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            name="password"
+            class="form-control"
+            placeholder="••••••••"
+            [(ngModel)]="passwordForm.password"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          [disabled]="!passwordForm.email || !passwordForm.password"
+        >
+          Sign In
+        </button>
+      </form>
+    }
+
+    <!-- Tab 2: OTP Login Form -->
+    @if (activeTab === 'otp') {
+      <form (ngSubmit)="onOtpLogin()" class="auth-form">
+        <div class="form-group">
+          <label for="otp-email">Registered Email Address</label>
+          <div class="input-with-button">
+            <input
+              type="email"
+              id="otp-email"
+              name="email"
+              class="form-control"
+              placeholder="e.g. admin@example.com"
+              [(ngModel)]="otpForm.email"
+              [disabled]="otpSent"
+              required
+            />
+            @if (!otpSent) {
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                (click)="onRequestOtp()"
+                [disabled]="isSendingOtp || !otpForm.email"
+              >
+                {{ isSendingOtp ? 'Sending...' : 'Get OTP' }}
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (otpSent) {
+          <div class="form-group">
+            <label for="otp-code">Enter 6-Digit OTP</label>
+            <input
+              type="text"
+              id="otp-code"
+              name="otp"
+              class="form-control text-center"
+              placeholder="000000"
+              maxlength="6"
+              [(ngModel)]="otpForm.otp"
+              required
+            />
+          </div>
+
+          <!-- @if (testOtpCode) {
+            <div class="variables-panel" style="margin-top: 10px; margin-bottom: 15px;">
+              <h4 style="color: var(--color-green);">🧪 Test Credentials (OTP Sent):</h4>
+              <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                Verification OTP code is: <strong style="font-family: monospace; font-size: 14px; color: var(--text-primary);">{{ testOtpCode }}</strong>
+              </p>
+            </div>
+          } -->
+
+          <div style="display: flex; gap: 8px;">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              style="flex: 1;"
+              (click)="otpSent = false; testOtpCode = ''; otpForm.otp = '';"
+            >
+              Back
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="flex: 2;"
+              [disabled]="isVerifyingOtp || otpForm.otp.length < 6"
+            >
+              {{ isVerifyingOtp ? 'Verifying...' : 'Verify & Sign In' }}
+            </button>
+          </div>
+        }
+      </form>
+    }
+
+    <!-- Redirection Link -->
+    <div class="auth-footer">
+      <span>New to Scheduler?</span>
+      <a routerLink="/register">Register Now</a>
+    </div>
+  </div>
+</div>

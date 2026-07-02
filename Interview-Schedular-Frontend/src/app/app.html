@@ -1,0 +1,161 @@
+@if (authService.isAuthenticated()) {
+  <div class="app-container">
+    <!-- Sidebar Navigation Component -->
+    <app-sidebar></app-sidebar>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="top-bar">
+        <h1>{{ pageTitle }}</h1>
+        <div style="display: flex; align-items: center;">
+          <!-- Theme Switcher Selector -->
+          <div class="theme-selector">
+            <button class="theme-btn" (click)="toggleThemeMenu($event)" [title]="'Current theme: ' + currentTheme">
+              @if (currentTheme === 'light') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              }
+              @if (currentTheme === 'dark') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              }
+              @if (currentTheme === 'system') {
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              }
+            </button>
+
+            @if (isThemeMenuOpen) {
+              <div class="theme-dropdown">
+                <button type="button" class="theme-dropdown-item" [class.active]="currentTheme === 'light'" (click)="selectTheme('light')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                  <span>Light</span>
+                </button>
+                <button type="button" class="theme-dropdown-item" [class.active]="currentTheme === 'dark'" (click)="selectTheme('dark')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                  <span>Dark</span>
+                </button>
+                <button type="button" class="theme-dropdown-item" [class.active]="currentTheme === 'system'" (click)="selectTheme('system')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                  <span>System</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="profile-container">
+            <button class="profile-btn" (click)="toggleProfileMenu($event)">
+              @if (authService.currentUser()?.profilePicture) {
+                <img [src]="authService.currentUser()?.profilePicture" class="profile-img" alt="Profile" />
+              } @else {
+                <div class="avatar">{{ authService.currentUser()?.name?.substring(0, 2)?.toUpperCase() || 'HR' }}</div>
+              }
+              <span class="profile-name">{{ authService.currentUser()?.name || 'Administrator' }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="profile-arrow" [class.open]="isProfileMenuOpen">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            @if (isProfileMenuOpen) {
+              <div class="profile-dropdown" (click)="$event.stopPropagation()">
+                <div class="dropdown-profile-header">
+                  <div class="avatar-upload-container" (click)="fileInput.click()">
+                    @if (authService.currentUser()?.profilePicture) {
+                      <img [src]="authService.currentUser()?.profilePicture" class="dropdown-profile-img" alt="Profile" />
+                    } @else {
+                      <div class="dropdown-avatar">{{ authService.currentUser()?.name?.substring(0, 2)?.toUpperCase() || 'HR' }}</div>
+                    }
+                    <div class="avatar-overlay">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                      <span>Upload</span>
+                    </div>
+                  </div>
+                  <input type="file" #fileInput style="display: none" accept="image/*" (change)="onProfilePicSelected($event)" />
+                  
+                  <div class="dropdown-user-details">
+                    <h4>{{ authService.currentUser()?.name }}</h4>
+                    <p>{{ authService.currentUser()?.email }}</p>
+                  </div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <button type="button" class="dropdown-item logout-btn" (click)="onLogout()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                  </svg>
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <!-- Routing Views Rendered Here -->
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+} @else {
+  <div class="auth-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+}
+
+<!-- Notification Toast Container -->
+<div class="toast-container">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class]="toast.type">
+      @if (toast.type === 'success') {
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="text-green"
+        >
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      }
+      @if (toast.type === 'error') {
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="text-red"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+      }
+      @if (toast.type === 'info') {
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="text-blue"
+        >
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      }
+      <span>{{ toast.message }}</span>
+      <span class="toast-close" (click)="toastService.remove(toast.id)">&times;</span>
+    </div>
+  }
+</div>

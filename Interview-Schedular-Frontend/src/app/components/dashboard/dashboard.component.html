@@ -1,0 +1,243 @@
+<section class="tab-pane active">
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon purple">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">Total Batches</span>
+        <h3 class="stat-value">{{ dashboardStats.batches }}</h3>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">Total Candidates</span>
+        <h3 class="stat-value">{{ dashboardStats.candidates }}</h3>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon cyan">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+      </div>
+      <div class="stat-details">
+        <span class="stat-label">WhatsApp Templates</span>
+        <h3 class="stat-value">{{ dashboardStats.templates }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Section and Batches Grid -->
+  <div class="dashboard-grid">
+    <!-- Upload Card -->
+    <div class="card glass-card upload-card">
+      <div class="card-header">
+        <h3>Upload Candidates Excel</h3>
+        <p>
+          Upload .xlsx or .xls file formatted with name, email, phone, role, and details.
+        </p>
+      </div>
+      <div class="card-body">
+        <div
+          class="dropzone"
+          id="excel-dropzone"
+          (click)="fileInput.click()"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)"
+        >
+          <input
+            type="file"
+            #fileInput
+            (change)="onFileChange($event)"
+            (click)="fileInput.value = ''"
+            accept=".xlsx, .xls"
+            hidden
+          />
+          <div class="dropzone-content">
+            <div class="upload-icon">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <p class="dropzone-title">Drag & drop your Excel file here</p>
+            <p class="dropzone-subtitle">or click to browse files</p>
+          </div>
+        </div>
+
+        @if (selectedFile) {
+          <div class="selected-file-info">
+            <div class="file-details">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              <span>{{ selectedFileName }}</span>
+            </div>
+            <button
+              class="btn btn-primary btn-sm"
+              [disabled]="isUploading"
+              (click)="uploadExcel()"
+            >
+              {{ isUploading ? 'Uploading...' : 'Upload Batch' }}
+            </button>
+          </div>
+        }
+      </div>
+      <div class="card-footer">
+        <a href="http://localhost:8081/candidates.xlsx" download class="sample-link">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download Sample Excel Template
+        </a>
+      </div>
+    </div>
+
+    <!-- Batches List -->
+    <div class="card glass-card list-card">
+      <div class="card-header">
+        <h3>Uploaded Batches</h3>
+        <p>Manage your uploaded lists of interview candidates.</p>
+      </div>
+      <div class="card-body">
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Batch ID</th>
+                <th>Filename</th>
+                <th>Candidates</th>
+                <th>Status</th>
+                <th>Uploaded At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (batch of batches; track batch.id) {
+                <tr>
+                  <td>
+                    <strong>#{{ batch.id }}</strong>
+                  </td>
+                  <td>{{ batch.fileName }}</td>
+                  <td>{{ batch.totalCandidates }}</td>
+                  <td>
+                    <span class="badge" [class]="(batch.status || '').toLowerCase()">{{
+                      batch.status || 'UPLOADED'
+                    }}</span>
+                  </td>
+                  <td>{{ batch.createdAt | date: 'short' }}</td>
+                  <td>
+                    <button
+                      class="btn-danger-icon"
+                      (click)="openDeleteModal(batch.id)"
+                      title="Delete Batch"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path
+                          d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                        ></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center">No batches uploaded yet.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Custom Deletion Confirm Modal -->
+<app-confirm-modal
+  title="Delete Candidate Batch"
+  message="Are you sure you want to delete this candidate batch? This will permanently erase all candidate profiles and campaign sending history associated with it."
+  [isOpen]="isDeleteModalOpen"
+  (confirm)="confirmDeleteBatch()"
+  (cancel)="closeDeleteModal()"
+></app-confirm-modal>

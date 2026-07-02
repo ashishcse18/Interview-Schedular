@@ -1,0 +1,110 @@
+<section class="tab-pane active">
+  <div class="send-layout">
+    <!-- Launch Bulk Campaign Card -->
+    <div class="card glass-card">
+      <div class="card-header">
+        <h3>Launch Bulk Campaign</h3>
+        <p>Select an uploaded candidate list and a message template to execute sending.</p>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="triggerCampaign()">
+          <div class="form-group">
+            <label for="campaign-batch">Select Candidate Batch</label>
+            <select
+              id="campaign-batch"
+              name="batchId"
+              class="form-control"
+              [(ngModel)]="campaign.batchId"
+              required
+            >
+              <option value="">-- Select a Batch --</option>
+              @for (b of batches; track b.id) {
+                <option [value]="b.id" [disabled]="b.status === 'SENDING'">
+                  Batch #{{ b.id }} - {{ b.fileName }} ({{ b.totalCandidates }} candidates)
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="campaign-template">Select Message Template</label>
+            <select
+              id="campaign-template"
+              name="templateId"
+              class="form-control"
+              [(ngModel)]="campaign.templateId"
+              required
+            >
+              <option value="">-- Select a Template --</option>
+              @for (t of templates; track t.id) {
+                <option [value]="t.id">{{ t.name }} (ID: {{ t.id }})</option>
+              }
+            </select>
+          </div>
+
+          @if (campaign.templateId) {
+            <div class="template-preview-panel">
+              <h4>Template Preview:</h4>
+              <div class="preview-box">{{ getSelectedTemplateContent() }}</div>
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="isSending || !campaign.batchId || !campaign.templateId"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="mr-2"
+            >
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            {{ isSending ? 'Campaign in Progress...' : 'Send Messages Now' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Campaign Progress -->
+    <div
+      class="card glass-card progress-card animate-fade"
+      [class.hidden]="!isSending && !campaignStats.batchId"
+    >
+      <div class="card-header">
+        <h3>Campaign Progress</h3>
+        <p id="progress-batch-info">Dispatching messages: {{ campaignStats.fileName }}</p>
+      </div>
+      <div class="card-body">
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" [style.width]="progressBarWidth"></div>
+        </div>
+        <div class="progress-stats">
+          <div class="progress-stat">
+            <span class="stat-count text-purple">{{ campaignStats.totalCandidates }}</span>
+            <span class="stat-desc">Total</span>
+          </div>
+          <div class="progress-stat">
+            <span class="stat-count text-purple" style="opacity: 0.7">{{
+              campaignStats.pendingCount
+            }}</span>
+            <span class="stat-desc">Pending</span>
+          </div>
+          <div class="progress-stat">
+            <span class="stat-count text-blue">{{ campaignStats.sentCount }}</span>
+            <span class="stat-desc">Sent</span>
+          </div>
+          <div class="progress-stat">
+            <span class="stat-count text-red">{{ campaignStats.failedCount }}</span>
+            <span class="stat-desc">Failed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

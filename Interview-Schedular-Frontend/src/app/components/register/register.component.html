@@ -1,0 +1,69 @@
+<div class="auth-container">
+  <div class="auth-card glass-card">
+    <div class="auth-brand">
+      <div class="auth-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-light">
+          <path d="M22 2L11 13"></path>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </div>
+      <h2>Interview Scheduler</h2>
+      <p>Register a new administrator profile</p>
+    </div>
+
+    <form (ngSubmit)="onRegister()" class="auth-form">
+      <div class="form-group">
+        <label for="reg-name">Full Name</label>
+        <input
+          type="text"
+          id="reg-name"
+          name="name"
+          class="form-control"
+          placeholder="e.g. Ashish Kumar"
+          [(ngModel)]="registerForm.name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="reg-email">Email Address</label>
+        <input
+          type="email"
+          id="reg-email"
+          name="email"
+          class="form-control"
+          placeholder="e.g. admin@example.com"
+          [(ngModel)]="registerForm.email"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="reg-password">Password</label>
+        <input
+          type="password"
+          id="reg-password"
+          name="password"
+          class="form-control"
+          placeholder="Enter Password"
+          [(ngModel)]="registerForm.password"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-block"
+        [disabled]="isRegistering || !registerForm.name || !registerForm.email || !registerForm.password"
+      >
+        {{ isRegistering ? 'Registering...' : 'Register Profile' }}
+      </button>
+    </form>
+
+    <!-- Redirection Link -->
+    <div class="auth-footer">
+      <span>Already have a profile?</span>
+      <a routerLink="/login">Sign In</a>
+    </div>
+  </div>
+</div>
