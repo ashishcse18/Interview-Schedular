@@ -1,0 +1,408 @@
+<div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </div>
+            <h2>Interview Schedular</h2>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="#" class="nav-item" [class.active]="activeTab === 'dashboard'" (click)="switchTab('dashboard')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" [class.active]="activeTab === 'templates'" (click)="switchTab('templates')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Templates</span>
+            </a>
+            <a href="#" class="nav-item" [class.active]="activeTab === 'send'" (click)="switchTab('send')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                <span>Send Messages</span>
+            </a>
+            <a href="#" class="nav-item" [class.active]="activeTab === 'logs'" (click)="switchTab('logs')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <span>Delivery Logs</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="status-indicator">
+                <span class="status-dot online"></span>
+                <span class="status-text">Server Connected</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>{{ pageTitle }}</h1>
+            <div class="user-profile">
+                <div class="avatar">HR</div>
+                <span>Administrator</span>
+            </div>
+        </header>
+
+        <!-- Notification Toast Container -->
+        <div class="toast-container">
+            @for (toast of toasts; track toast.id) {
+                <div class="toast" [class]="toast.type">
+                    @if (toast.type === 'success') {
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    }
+                    @if (toast.type === 'error') {
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    }
+                    @if (toast.type === 'info') {
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    }
+                    <span>{{ toast.message }}</span>
+                    <span class="toast-close" (click)="removeToast(toast.id)">&times;</span>
+                </div>
+            }
+        </div>
+
+        <div class="content-wrapper">
+            
+            <!-- TAB 1: DASHBOARD -->
+            @if (activeTab === 'dashboard') {
+                <section class="tab-pane active">
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Total Batches</span>
+                                <h3 class="stat-value">{{ dashboardStats.batches }}</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Total Candidates</span>
+                                <h3 class="stat-value">{{ dashboardStats.candidates }}</h3>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon cyan">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">WhatsApp Templates</span>
+                                <h3 class="stat-value">{{ dashboardStats.templates }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Section and Batches Grid -->
+                    <div class="dashboard-grid">
+                        <!-- Upload Card -->
+                        <div class="card glass-card upload-card">
+                            <div class="card-header">
+                                <h3>Upload Candidates Excel</h3>
+                                <p>Upload .xlsx or .xls file formatted with name, email, phone, role, and details.</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="dropzone" id="excel-dropzone" 
+                                     (click)="fileInput.click()"
+                                     (dragover)="onDragOver($event)"
+                                     (dragleave)="onDragLeave($event)"
+                                     (drop)="onDrop($event)">
+                                    <input type="file" #fileInput (change)="onFileChange($event)" accept=".xlsx, .xls" hidden>
+                                    <div class="dropzone-content">
+                                        <div class="upload-icon">
+                                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                        </div>
+                                        <p class="dropzone-title">Drag & drop your Excel file here</p>
+                                        <p class="dropzone-subtitle">or click to browse files</p>
+                                    </div>
+                                </div>
+                                
+                                @if (selectedFile) {
+                                    <div class="selected-file-info">
+                                        <div class="file-details">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                            <span>{{ selectedFileName }}</span>
+                                        </div>
+                                        <button class="btn btn-primary btn-sm" [disabled]="isUploading" (click)="uploadExcel()">
+                                            {{ isUploading ? 'Uploading...' : 'Upload Batch' }}
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="card-footer">
+                                <a href="http://localhost:8080/candidates.xlsx" download class="sample-link">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                    Download Sample Excel Template
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Batches List -->
+                        <div class="card glass-card list-card">
+                            <div class="card-header">
+                                <h3>Uploaded Batches</h3>
+                                <p>Manage your uploaded lists of interview candidates.</p>
+                            </div>
+                            <div class="card-body table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Batch ID</th>
+                                            <th>Filename</th>
+                                            <th>Candidates</th>
+                                            <th>Status</th>
+                                            <th>Uploaded At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (batch of batches; track batch.id) {
+                                            <tr>
+                                                <td><strong>#{{ batch.id }}</strong></td>
+                                                <td>{{ batch.fileName }}</td>
+                                                <td>{{ batch.totalCandidates }}</td>
+                                                <td>
+                                                    <span class="badge" [class]="batch.status.toLowerCase()">{{ batch.status }}</span>
+                                                </td>
+                                                <td>{{ batch.createdAt | date:'short' }}</td>
+                                                <td>
+                                                    <button class="btn-danger-icon" (click)="deleteBatch(batch.id)" title="Delete Batch">
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        } @empty {
+                                            <tr>
+                                                <td colspan="6" class="text-center">No batches uploaded yet.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+
+            <!-- TAB 2: TEMPLATES -->
+            @if (activeTab === 'templates') {
+                <section class="tab-pane active">
+                    <div class="templates-layout">
+                        <!-- Template Creator -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>{{ newTemplate.id ? 'Edit Template' : 'Create Template' }}</h3>
+                                <p>Define a reusable message template with dynamic variables.</p>
+                            </div>
+                            <div class="card-body">
+                                <form id="template-form" (ngSubmit)="saveTemplate()">
+                                    <div class="form-group">
+                                        <label for="template-name">Template Name</label>
+                                        <input type="text" id="template-name" name="name" class="form-control" 
+                                               placeholder="e.g. Java Interview Invite" [(ngModel)]="newTemplate.name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="template-content">Message Content</label>
+                                        <textarea id="template-content" name="content" class="form-control text-area" 
+                                                  rows="10" placeholder="Hello {{'{{candidateName}}'}}, you have an interview..." 
+                                                  [(ngModel)]="newTemplate.content" required></textarea>
+                                    </div>
+                                    <div class="variables-panel">
+                                        <h4>Insert Placeholders:</h4>
+                                        <div class="variable-tags">
+                                            <span class="var-tag" (click)="insertPlaceholder('{{candidateName}}')">{{ '{{candidateName}}' }}</span>
+                                            <span class="var-tag" (click)="insertPlaceholder('{{companyName}}')">{{ '{{companyName}}' }}</span>
+                                            <span class="var-tag" (click)="insertPlaceholder('{{role}}')">{{ '{{role}}' }}</span>
+                                            <span class="var-tag" (click)="insertPlaceholder('{{panelTiming}}')">{{ '{{panelTiming}}' }}</span>
+                                            <span class="var-tag" (click)="insertPlaceholder('{{gmeetLink}}')">{{ '{{gmeetLink}}' }}</span>
+                                            <span class="var-tag" (click)="insertPlaceholder('{{interviewerName}}')">{{ '{{interviewerName}}' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-secondary" (click)="clearTemplateForm()">Clear</button>
+                                        <button type="submit" class="btn btn-primary">{{ newTemplate.id ? 'Update Template' : 'Save Template' }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Template Grid -->
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <h3>Saved Templates</h3>
+                                <p>Templates available for bulk WhatsApp campaigns.</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="templates-grid">
+                                    @for (template of templates; track template.id) {
+                                        <div class="template-card">
+                                            <div class="template-card-header">
+                                                <h4>{{ template.name }}</h4>
+                                                <span class="var-tag" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); cursor: default;">#{{ template.id }}</span>
+                                            </div>
+                                            <div class="template-card-body">{{ template.content }}</div>
+                                            <div class="template-card-footer">
+                                                <button class="btn btn-secondary btn-sm" (click)="editTemplate(template)">Edit</button>
+                                                <button class="btn-danger-icon" (click)="deleteTemplate(template.id, template.name)">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    } @empty {
+                                        <div class="no-templates text-center" style="grid-column: 1/-1;">No templates created yet.</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+
+            <!-- TAB 3: SEND -->
+            @if (activeTab === 'send') {
+                <section class="tab-pane active">
+                    <div class="send-layout">
+                        <!-- Campaign Selector -->
+                        <div class="card glass-card select-campaign-card">
+                            <div class="card-header">
+                                <h3>Launch Bulk Campaign</h3>
+                                <p>Select an uploaded candidate list and a message template to execute sending.</p>
+                            </div>
+                            <div class="card-body">
+                                <form id="campaign-form" (ngSubmit)="triggerCampaign()">
+                                    <div class="form-group">
+                                        <label for="campaign-batch-select">Select Candidate Batch</label>
+                                        <select id="campaign-batch-select" name="batchId" class="form-control" [(ngModel)]="campaign.batchId" required>
+                                            <option value="">-- Select a Batch --</option>
+                                            @for (b of batches; track b.id) {
+                                                <option [value]="b.id">Batch #{{ b.id }} - {{ b.fileName }} ({{ b.totalCandidates }} candidates)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="campaign-template-select">Select Message Template</label>
+                                        <select id="campaign-template-select" name="templateId" class="form-control" [(ngModel)]="campaign.templateId" required>
+                                            <option value="">-- Select a Template --</option>
+                                            @for (t of templates; track t.id) {
+                                                <option [value]="t.id">{{ t.name }} (ID: {{ t.id }})</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    
+                                    @if (campaign.templateId) {
+                                        <div class="template-preview-panel">
+                                            <h4>Template Preview:</h4>
+                                            <div class="preview-box">{{ getSelectedTemplateContent() }}</div>
+                                        </div>
+                                    }
+
+                                    <button type="submit" class="btn btn-primary btn-block" [disabled]="isSending || !campaign.batchId || !campaign.templateId">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-2"><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                        {{ isSending ? 'Campaign in Progress...' : 'Send Messages Now' }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Campaign Progress -->
+                        <div class="card glass-card progress-card animate-fade" [class.hidden]="!isSending && !campaignStats.batchId">
+                            <div class="card-header">
+                                <h3>Campaign Progress</h3>
+                                <p id="progress-batch-info">Dispatching messages: {{ campaignStats.fileName }}</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" [style.width]="progressBarWidth"></div>
+                                </div>
+                                <div class="progress-stats">
+                                    <div class="progress-stat">
+                                        <span class="stat-count text-purple">{{ campaignStats.totalCandidates }}</span>
+                                        <span class="stat-desc">Total</span>
+                                    </div>
+                                    <div class="progress-stat">
+                                        <span class="stat-count text-blue">{{ campaignStats.pendingCount }}</span>
+                                        <span class="stat-desc">Pending</span>
+                                    </div>
+                                    <div class="progress-stat">
+                                        <span class="stat-count text-green">{{ campaignStats.sentCount }}</span>
+                                        <span class="stat-desc">Sent</span>
+                                    </div>
+                                    <div class="progress-stat">
+                                        <span class="stat-count text-red">{{ campaignStats.failedCount }}</span>
+                                        <span class="stat-desc">Failed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+
+            <!-- TAB 4: LOGS -->
+            @if (activeTab === 'logs') {
+                <section class="tab-pane active">
+                    <div class="card glass-card">
+                        <div class="card-header logs-header">
+                            <div>
+                                <h3>Delivery Logs</h3>
+                                <p>Track detailed status logs and error reports of sent messages.</p>
+                            </div>
+                            <div class="logs-filter">
+                                <select id="logs-batch-filter" class="form-control" [(ngModel)]="logsBatchFilter" (change)="onLogsFilterChange()">
+                                    <option value="">-- Select a Batch --</option>
+                                    @for (b of batches; track b.id) {
+                                        <option [value]="b.id">Batch #{{ b.id }} - {{ b.fileName }}</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Log ID</th>
+                                        <th>Candidate Name</th>
+                                        <th>WhatsApp Number</th>
+                                        <th>Status</th>
+                                        <th>Sent Time</th>
+                                        <th>Error Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (logEntry of logs; track logEntry.id) {
+                                        <tr>
+                                            <td><strong>#{{ logEntry.id }}</strong></td>
+                                            <td>{{ getCandidateName(logEntry.candidateId) }}</td>
+                                            <td>{{ getCandidatePhone(logEntry.candidateId) }}</td>
+                                            <td>
+                                                <span class="badge" [class]="logEntry.status.toLowerCase()">{{ logEntry.status }}</span>
+                                            </td>
+                                            <td>{{ logEntry.sentAt | date:'medium' }}</td>
+                                            <td class="text-red" style="font-size: 11px; max-width: 200px; overflow-wrap: break-word;">
+                                                {{ logEntry.errorMessage ? logEntry.errorMessage : '-' }}
+                                            </td>
+                                        </tr>
+                                    } @empty {
+                                        <tr>
+                                            <td colspan="6" class="text-center">
+                                                {{ isLoadingLogs ? 'Loading logs...' : 'Select a batch from the filter dropdown above to view delivery logs.' }}
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            }
+
+        </div>
+    </main>
+</div>
